@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Lottery {
+contract Lottery is Ownable {
     uint256 MINIMUM_PRICE_USD = 50;
     uint256 DECIMALS_FOR_ETH_CONVERSION = 10**18;
 
     address payable[] public players;
-    address public owner;
     AggregatorV3Interface public priceFeed;
 
     enum LOTTERY_STATE {
@@ -19,8 +19,7 @@ contract Lottery {
     }
     LOTTERY_STATE public lotteryState;
 
-    constructor(address _priceFeed) public {
-        owner = msg.sender;
+    constructor(address _priceFeed) {
         priceFeed = AggregatorV3Interface(_priceFeed);
         lotteryState = LOTTERY_STATE.CLOSED;
     }
@@ -28,7 +27,7 @@ contract Lottery {
     function enterLottery() public payable {
         require(msg.value > getEntranceFee(), "Pay more");
         require(lotteryState == LOTTERY_STATE.OPEN, "Lottery must be open");
-        players.push(msg.sender);
+        players.push(payable(msg.sender));
     }
 
     function getPrice() public view returns(uint256) {
@@ -38,11 +37,6 @@ contract Lottery {
 
     function getEntranceFee() public view returns(uint256) {
         return getPrice() / DECIMALS_FOR_ETH_CONVERSION / MINIMUM_PRICE_USD;
-    }
-
-    modifier onlyOwner {
-        require(msg.sender == owner, "you need to be the owner");
-        _;
     }
 
     function startLottery() public onlyOwner {
