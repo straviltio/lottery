@@ -12,13 +12,22 @@ contract Lottery {
     address public owner;
     AggregatorV3Interface public priceFeed;
 
+    enum LOTTERY_STATE {
+        OPEN,
+        CLOSED,
+        CALCULATING_WINNER
+    }
+    LOTTERY_STATE public lotteryState;
+
     constructor(address _priceFeed) public {
         owner = msg.sender;
         priceFeed = AggregatorV3Interface(_priceFeed);
+        lotteryState = LOTTERY_STATE.CLOSED;
     }
 
     function enterLottery() public payable {
         require(msg.value > getEntranceFee(), "Pay more");
+        require(lotteryState == LOTTERY_STATE.OPEN, "Lottery must be open");
         players.push(msg.sender);
     }
 
@@ -36,8 +45,13 @@ contract Lottery {
         _;
     }
 
+    function startLottery() public onlyOwner {
+        lotteryState = LOTTERY_STATE.OPEN;
+    } 
+
     function stopLotteryAndPayout() public onlyOwner payable {
         players[0].transfer(address(this).balance);
         players = new address payable[](0);
+        lotteryState = LOTTERY_STATE.CLOSED;
     } 
 }
