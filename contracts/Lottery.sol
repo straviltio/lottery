@@ -6,6 +6,7 @@ import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 
 contract Lottery {
     uint256 MINIMUM_PRICE_USD = 50;
+    uint256 DECIMALS_FOR_ETH_CONVERSION = 10**18;
 
     address payable[] public players;
     address public owner;
@@ -27,7 +28,7 @@ contract Lottery {
     }
 
     function getEntranceFee() public view returns(uint256) {
-        return getPrice() / 1000000000000000000 / MINIMUM_PRICE_USD;
+        return getPrice() / DECIMALS_FOR_ETH_CONVERSION / MINIMUM_PRICE_USD;
     }
 
     modifier onlyOwner {
