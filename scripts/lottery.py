@@ -42,13 +42,13 @@ class LotteryContract:
         return tx
 
     def get_current_link_balance(self):
-        return self.lottery_contract.getCurrentLinkTokenBalance().return_value
+        return self.lottery_contract.getCurrentLinkTokenBalance()
 
     def is_funded_enough(self):
-        return self.lottery_contract.isFundedEnough().return_value
+        return self.lottery_contract.isFundedEnough()
 
     def get_vrf_fee(self):
-        return self.lottery_contract.getVrfFee().return_value
+        return self.lottery_contract.getVrfFee()
 
     def _test_only_vrf_callback(self):
         self.vrf_coordinator_contract.callBackWithRandomness(self.last_request_id, 1, self.lottery_contract)

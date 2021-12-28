@@ -72,15 +72,15 @@ contract Lottery is Ownable, VRFConsumerBase {
         lotteryState = LOTTERY_STATE.CLOSED;
     }
 
-    function getCurrentLinkTokenBalance() public returns (uint256) {
+    function getCurrentLinkTokenBalance() public view returns (uint256) {
         return LINK.balanceOf(address(this));
     }
 
-    function isFundedEnough() public returns (bool) {
+    function isFundedEnough() public view returns (bool) {
         return LINK.balanceOf(address(this)) >= vrfFee;
     }
 
-    function getVrfFee() public returns (uint256) {
+    function getVrfFee() public view returns (uint256) {
         return vrfFee;
     }
 }
