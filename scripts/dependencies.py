@@ -31,5 +31,4 @@ def build_lottery(account):
         key_hash = config["networks"][network.show_active()]["key_hash"]
         fee = config["networks"][network.show_active()]["fee"]
         verify = config["networks"][network.show_active()]["verify"]
-    print(f"FEE IS {fee}")
     return LotteryContract(price_feed, vrf, link, key_hash, fee, account, verify)

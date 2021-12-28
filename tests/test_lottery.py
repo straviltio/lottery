@@ -17,32 +17,32 @@ def run_around_tests():
 
     # Ensure can't enter lottery yet
     with pytest.raises(exceptions.VirtualMachineError):
-        lottery.enter_lottery(account, 100)
+        lottery.enter_lottery(account, 1000000000000000000)
 
     lottery.start_lottery(account)
     yield
 
 def test_get_entrance_fee():
-    assert 80 == lottery.get_entrance_fee()
+    assert 800000000000 == lottery.get_entrance_fee()
 
 def test_entrance_check_passes():
     global account
-    lottery.enter_lottery(account, 100)
+    lottery.enter_lottery(account, 1000000000000000000)
 
-def test_entrance_check_fails():
+def test_entrance_check_fails_not_enough_funds():
     global account
     with pytest.raises(exceptions.VirtualMachineError):
         lottery.enter_lottery(account, 5)
 
 def test_lottery_end_works_when_owner():
     global account
-    lottery.enter_lottery(account, 100)
+    lottery.enter_lottery(account, 1000000000000000000)
     lottery.fund_with_link(account, 200000000000000000)
     lottery.end_lottery(account)
 
 def test_lottery_pays_out():
     global account
-    lottery.enter_lottery(account, 100)
+    lottery.enter_lottery(account, 1000000000000000000)
     account_balance_before_winning = account.balance()
     lottery.fund_with_link(account, 200000000000000000)
     lottery.end_lottery(account)
@@ -51,7 +51,7 @@ def test_lottery_pays_out():
 
 def test_lottery_end_fails_when_not_owner():
     global account
-    lottery.enter_lottery(account, 100)
+    lottery.enter_lottery(account, 1000000000000000000)
 
     not_owner_account = accounts[1]
     with pytest.raises(exceptions.VirtualMachineError):
@@ -63,7 +63,7 @@ def test_fails_to_enter_lottery_when_its_closed():
     lottery.fund_with_link(account, 100)
     lottery.end_lottery(account)
     with pytest.raises(exceptions.VirtualMachineError):
-        lottery.enter_lottery(account, 100)
+        lottery.enter_lottery(account, 1000000000000000000)
 
 def test_fund_with_link():
     lottery.fund_with_link(account, 100)

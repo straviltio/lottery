@@ -9,7 +9,7 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
 contract Lottery is Ownable, VRFConsumerBase {
     uint256 MINIMUM_PRICE_USD = 50;
-    uint256 DECIMALS_FOR_ETH_CONVERSION = 10**18;
+    uint256 DECIMALS_FOR_ETH_CONVERSION = 10**8;
 
     address payable[] public players;
     AggregatorV3Interface public priceFeed;
