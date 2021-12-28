@@ -9,7 +9,7 @@ def is_development():
 def build_lottery(account):
     if is_development():
         link_token = LinkToken.deploy({"from": account})      
-        price_feed = MockV3Aggregator.deploy(18, Web3.toWei(4000, "ether"), {"from": account})
+        price_feed = MockV3Aggregator.deploy(8, 397707592737, {"from": account})
         vrf = VRFCoordinatorMock.deploy(link_token.address, {"from": account})
         link = link_token
         key_hash = config["networks"][network.show_active()]["key_hash"]

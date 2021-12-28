@@ -9,12 +9,13 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
 contract Lottery is Ownable, VRFConsumerBase {
     uint256 MINIMUM_PRICE_USD = 50;
-    uint256 DECIMALS_FOR_ETH_CONVERSION = 10**8;
+    uint256 ETH_TO_WEI = 10**18;
+    uint256 MINIMUM_PRICE_USD_WITH_DECIMALS_FOR_ETH_CONVERSION = MINIMUM_PRICE_USD * ETH_TO_WEI;
 
     address payable[] public players;
     AggregatorV3Interface public priceFeed;
-    uint256 fee;
-    bytes32 keyHash;
+    uint256 vrfFee;
+    bytes32 vrfKeyHash;
 
     enum LOTTERY_STATE {
         OPEN,
@@ -27,11 +28,11 @@ contract Lottery is Ownable, VRFConsumerBase {
         address _priceFeed,         
         address _vrfCoordinator, 
         address _vrfToken, 
-        bytes32 _keyHash,
-        uint256 _fee
+        bytes32 _vrfKeyHash,
+        uint256 _vrfFee
     ) VRFConsumerBase(_vrfCoordinator, _vrfToken) {
-        fee = _fee;
-        keyHash = _keyHash;
+        vrfFee = _vrfFee;
+        vrfKeyHash = _vrfKeyHash;
         priceFeed = AggregatorV3Interface(_priceFeed);
         lotteryState = LOTTERY_STATE.CLOSED;
     }
@@ -42,13 +43,13 @@ contract Lottery is Ownable, VRFConsumerBase {
         players.push(payable(msg.sender));
     }
 
-    function getPrice() public view returns(uint256) {
+    function getCurrentEthPrice() public view returns(uint256) {
         (,int256 answer,,,) = priceFeed.latestRoundData();
         return uint256(answer);
     }
 
     function getEntranceFee() public view returns(uint256) {
-        return getPrice() / DECIMALS_FOR_ETH_CONVERSION / MINIMUM_PRICE_USD;
+        return MINIMUM_PRICE_USD_WITH_DECIMALS_FOR_ETH_CONVERSION / getCurrentEthPrice();
     }
 
     function startLottery() public onlyOwner {
@@ -59,7 +60,7 @@ contract Lottery is Ownable, VRFConsumerBase {
     function stopLotteryAndPayout() public onlyOwner payable returns (bytes32) {
         lotteryState = LOTTERY_STATE.CALCULATING_WINNER;
         require(isFundedEnough(), "Not enough LINK - fill contract with faucet");
-        return requestRandomness(keyHash, fee);
+        return requestRandomness(vrfKeyHash, vrfFee);
     }
 
     function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
@@ -75,10 +76,10 @@ contract Lottery is Ownable, VRFConsumerBase {
     }
 
     function isFundedEnough() public returns (bool) {
-        return LINK.balanceOf(address(this)) >= fee;
+        return LINK.balanceOf(address(this)) >= vrfFee;
     }
 
     function getVrfFee() public returns (uint256) {
-        return fee;
+        return vrfFee;
     }
 }

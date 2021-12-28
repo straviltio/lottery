@@ -39,7 +39,6 @@ class LotteryContract:
     def fund_with_link(self, account, amount):
         tx = self.link_token_contract.transfer(self.lottery_contract, amount, {"from": account})
         tx.wait(1)
-        print("Funded contract!")
         return tx
 
     def get_current_link_balance(self):
@@ -53,3 +52,6 @@ class LotteryContract:
 
     def _test_only_vrf_callback(self):
         self.vrf_coordinator_contract.callBackWithRandomness(self.last_request_id, 1, self.lottery_contract)
+
+    def get_current_eth_price(self):
+        return self.lottery_contract.getCurrentEthPrice()
