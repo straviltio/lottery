@@ -40,6 +40,15 @@ def test_lottery_end_works_when_owner():
     lottery.fund_with_link(account, 200000000000000000)
     lottery.end_lottery(account)
 
+def test_lottery_pays_out():
+    global account
+    lottery.enter_lottery(account, 100)
+    account_balance_before_winning = account.balance()
+    lottery.fund_with_link(account, 200000000000000000)
+    lottery.end_lottery(account)
+    lottery._test_only_vrf_callback()
+    assert account_balance_before_winning < account.balance()
+
 def test_lottery_end_fails_when_not_owner():
     global account
     lottery.enter_lottery(account, 100)

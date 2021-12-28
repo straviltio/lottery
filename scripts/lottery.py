@@ -34,6 +34,7 @@ class LotteryContract:
     def end_lottery(self, account):
         stopLotteryAndPayout = self.lottery_contract.stopLotteryAndPayout({"from": account})
         stopLotteryAndPayout.wait(1)
+        self.last_request_id = stopLotteryAndPayout.return_value
 
     def fund_with_link(self, account, amount):
         tx = self.link_token_contract.transfer(self.lottery_contract, amount, {"from": account})
@@ -49,3 +50,6 @@ class LotteryContract:
 
     def get_vrf_fee(self):
         return self.lottery_contract.getVrfFee().return_value
+
+    def _test_only_vrf_callback(self):
+        self.vrf_coordinator_contract.callBackWithRandomness(self.last_request_id, 1, self.lottery_contract)

@@ -56,10 +56,10 @@ contract Lottery is Ownable, VRFConsumerBase {
         lotteryState = LOTTERY_STATE.OPEN;
     } 
 
-    function stopLotteryAndPayout() public onlyOwner payable {
+    function stopLotteryAndPayout() public onlyOwner payable returns (bytes32) {
         lotteryState = LOTTERY_STATE.CALCULATING_WINNER;
         require(isFundedEnough(), "Not enough LINK - fill contract with faucet");
-        requestRandomness(keyHash, fee);
+        return requestRandomness(keyHash, fee);
     }
 
     function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
