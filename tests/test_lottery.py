@@ -23,10 +23,10 @@ def run_around_tests():
     yield
 
 def test_get_current_eth_price():
-    assert 397707592737 == lottery.get_current_eth_price()
+    assert 400000000000 == lottery.get_current_eth_price()
 
 def test_get_entrance_fee():
-    assert 125720506 == lottery.get_entrance_fee()
+    assert 12500000000000000 == lottery.get_entrance_fee()
 
 def test_entrance_check_passes():
     global account
